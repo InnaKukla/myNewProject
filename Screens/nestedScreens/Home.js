@@ -13,61 +13,60 @@ import { Feather } from "@expo/vector-icons";
 export const Home = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
   const [descriptionFoto, setDescriptionFoto] = useState("");
-  // const [descriptionLocality, setDescriptionLocality] = useState("");
-  console.log("route.params", route.params);
-  console.log("posts", posts);
+  const [descriptionLocality, setDescriptionLocality] = useState("");
+  // console.log("route.params", route.params);
+  // console.log("posts", posts);
 
   useEffect(() => {
     if (route.params) {
       setPosts((prevState) => [...prevState, route.params]);
       setDescriptionFoto((prevState) => [...prevState, route.params]);
-      // setDescriptionLocality((prevState) => [...prevState, route.params]);
+      setDescriptionLocality((prevState) => [...prevState, route.params]);
     }
   }, [route.params]);
-  console.log("posts-2", posts);
-  console.log("posts-3", descriptionFoto);
+
   return (
     <View style={styles.container}>
-        <FlatList
-          data={posts}
-          keyExtractor={(item, index) => index.toString()}
-          scrollEnabled
-          renderItem={({ item }) => (
-            <View style={styles.postContainer}>
-              <Image source={{ uri: item.photo }} style={styles.foto} />
-              <Text style={styles.postDescription}>Description</Text>
-              <View style={styles.iconsContainer}>
-                <TouchableOpacity
-                  style={styles.commentsContainer}
-                  onPress={() => navigation.navigate("CommentsScreen")}
-                >
-                  <Feather
-                    name="message-circle"
-                    size={20}
-                    color="#BDBDBD"
-                    style={styles.iconComments}
-                  />
-                  <Text style={styles.numberComments}>0</Text>
-                </TouchableOpacity>
+      <FlatList
+        data={posts}
+        keyExtractor={(item, index) => index.toString()}
+        scrollEnabled
+        renderItem={({ item }) => (
+          <View style={styles.postContainer}>
+            <Image source={{ uri: item.photo }} style={styles.foto} />
+            <Text style={styles.postDescription}>Description</Text>
+            <View style={styles.iconsContainer}>
+              <TouchableOpacity
+                style={styles.commentsContainer}
+                onPress={() => navigation.navigate("CommentsScreen")}
+              >
+                <Feather
+                  name="message-circle"
+                  size={20}
+                  color="#BDBDBD"
+                  style={styles.iconComments}
+                />
+                <Text style={styles.numberComments}>0</Text>
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={styles.locationContainer}
-                  onPress={() => navigation.navigate("MapScreen")}
-                >
-                  <Feather
-                    name="map-pin"
-                    size={20}
-                    color="#BDBDBD"
-                    style={styles.iconLocation}
-                  />
-                  <Text style={styles.nameLocation}>Name</Text>
-                </TouchableOpacity>
-                {/* <Button title="go to map" onPress={()=> navigation.navigate("MapScreen")} />
+              <TouchableOpacity
+                style={styles.locationContainer}
+                onPress={() => navigation.navigate("MapScreen")}
+              >
+                <Feather
+                  name="map-pin"
+                  size={20}
+                  color="#BDBDBD"
+                  style={styles.iconLocation}
+                />
+                <Text style={styles.nameLocation}>Name</Text>
+              </TouchableOpacity>
+              {/* <Button title="go to map" onPress={()=> navigation.navigate("MapScreen")} />
               <Button title="go to comments" onPress={()=> navigation.navigate("CommentsScreen")} />  */}
-              </View>
             </View>
-          )}
-        />
+          </View>
+        )}
+      />
     </View>
   );
 };
