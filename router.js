@@ -1,5 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -10,73 +11,123 @@ import { PostsScreen } from "./Screens/MainScreen/PostsScreen";
 import { CreatePostsScreen } from "./Screens/MainScreen/CreatePostsScreen";
 import { ProfileScreen } from "./Screens/MainScreen/ProfileScreen";
 
-import { MaterialCommunityIcons, Ionicons, Feather} from "@expo/vector-icons";
+import { MaterialCommunityIcons, Ionicons, Feather } from "@expo/vector-icons";
+import { authSingOutUser } from "./redux/auth/authOperation";
+import { useDispatch } from "react-redux";
 
 
 const AuthStack = createNativeStackNavigator();
 const MainTab = createBottomTabNavigator();
 
-export const useRoute = (isAuth ) => {
+const goBack = () => {
+  const navigation= useNavigation()
+  return (
+  <TouchableOpacity onPress={()=> navigation.navigate("Home")}>
+       <Text style={styles.iconBack}>
+           <Feather name="arrow-left" color={"rgba(33, 33, 33, 0.8)"} size={24} />
+         </Text>
+         </TouchableOpacity>
+  )
+}
+
+export const useRoute = (isAuth) => {
+  const dispatch = useDispatch();
+    const singOut = () => {
+    dispatch(authSingOutUser())
+  }
+
   if (!isAuth) {
     return (
       <AuthStack.Navigator>
         <AuthStack.Screen
           options={{ headerShown: false }}
-          name="Register"
-          component={RegistrationScreen}
+          name="Login"
+          component={LoginScreen}
         />
         <AuthStack.Screen
           options={{ headerShown: false }}
-          name="Login"
-          component={LoginScreen}
+          name="Register"
+          component={RegistrationScreen}
         />
       </AuthStack.Navigator>
     );
   }
   return (
-    <MainTab.Navigator >
+    <MainTab.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        tabBarItemStyle: {
+          borderRadius: 20,
+          width: 70,
+          height: 40,
+          marginTop: 9,
+          marginRight: 15,
+          marginLeft: 15
+        },
+        tabBarShowLabel: false,    //  new
+     tabBarShowIcon: true,
+        tabBarActiveBackgroundColor: "#FF6C00",
+        
+        tabBarStyle: {
+          justifyContent: "center",
+          alignItems: "center",
+          paddingHorizontal: 16
+        }
+      }}
+    >
       <MainTab.Screen
         options={{
           tabBarShowLabel: false,
+          // tabBarLabel: false,
+          // headerShown: false,
           headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <TouchableOpacity onPress={singOut}>
               <Text style={styles.iconLogOut}>
-                <Feather name="log-out" color={"gray"} size={24} />
+                <Feather name="log-out" color={'gray'} size={24} />
               </Text>
             </TouchableOpacity>
           ),
+          headerStyle: {
+borderBottomWidth: 1
+          },
           tabBarIcon: ({ focused, color, size }) => (
-            <Feather name="grid" size={24} color={color} />
+            <Feather name="grid" size={24} color={focused ? "#fff" : "rgba(33, 33, 33, 0.8)"} />
           ),
         }}
-        name="Posts"
+        name="Публікації"
         component={PostsScreen}
       />
       <MainTab.Screen
+        backBehavior
         options={{
+          
           // headerShown: false,
           tabBarShowLabel: false,
           tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="add-circle-outline" color={color} size={35} />
+            <Feather name="plus" color={focused ? "#fff" : "rgba(33, 33, 33, 0.8)"} size={24} />
           ),
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => {}}>
-              <Text style={styles.iconBack}>
-                <Feather name="arrow-left" color={"rgba(33, 33, 33, 0.8)"} size={24} />
-              </Text>
-            </TouchableOpacity>
-          ),
+          headerLeft: () => goBack(),
+          
         }}
-        name="Create Posts"
+        name="Створити публікацію"
         component={CreatePostsScreen}
       />
       <MainTab.Screen
         options={{
+          headerShown: false,
           tabBarShowLabel: false,
+          // headerRight: () => (
+          //   <TouchableOpacity onPress={singOut}>
+          //     <Text style={styles.iconLogOut}>
+          //       <Feather name="log-out" color={"gray"} size={24} />
+          //     </Text>
+          //   </TouchableOpacity>
+          // ),
+          
           tabBarIcon: ({ focused, color, size }) => (
-            <MaterialCommunityIcons
-              name="face-man-profile"
-              color={color}
+            <Feather
+              name="user"
+              color={focused ? "#fff" : "rgba(33, 33, 33, 0.8)"}
               size={size}
             />
           ),
