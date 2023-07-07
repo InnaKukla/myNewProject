@@ -14,6 +14,10 @@ import {
   Keyboard,
 } from "react-native";
 
+import { useDispatch } from "react-redux";
+import { authSingInUser } from "../../redux/auth/authOperation";
+
+
 const initialState = { email: "", password: "" };
 
 export const LoginScreen = ({ navigation }) => {
@@ -22,26 +26,29 @@ export const LoginScreen = ({ navigation }) => {
   const [dimensions, setDimensions] = useState(Dimensions.get("window").width);
   const [isShowPassword, setIsShowPassword] = useState(false);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const onChange = () => {
       const width = Dimensions.get("window").width;
       setDimensions(width);
     };
     Dimensions.addEventListener("change", onChange);
-    return () => {
-      Dimensions.removeEventListener("change", onChange);
-    };
+    // return () => {
+    //   Dimensions.removeEventListener("change", onChange);
+    // };
   }, []);
 
-  const keyboardHide = () => {
+  const handleSubmit = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
     console.log(state);
+    dispatch(authSingInUser(state))
     setState(initialState);
   };
 
   return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
+    <TouchableWithoutFeedback onPress={handleSubmit}>
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
@@ -55,7 +62,7 @@ export const LoginScreen = ({ navigation }) => {
                 ...styles.loginForm,
                 ...Platform.select({
                   ios: {
-                    marginBottom: isShowKeyboard ? -230 : 0,
+                    marginBottom: isShowKeyboard ? -160 : 0,
                   },
                   android: {
                     paddingTop: isShowKeyboard ? 80 : 32,
@@ -66,10 +73,25 @@ export const LoginScreen = ({ navigation }) => {
                 // marginBottom: isShowKeyboard ? -230 : 0,
               }}
             >
-              <Text style={styles.textLogin}>Войти</Text>
+              <Text style={{
+                  ...styles.textLogin,
+                  marginBottom: isShowKeyboard ? 15 : 33,
+                // // width: dimensions,
+                  ...Platform.select({
+                    ios: {
+                    marginBottom: isShowKeyboard ? 15 : 33,
+                   
+                  },
+                    android: {
+                      marginBottom: isShowKeyboard ? 15 : 33,
+                 
+                    },
+                  }),
+                }
+              }>Увійти</Text>
               <View>
                 <TextInput
-                  placeholder="Адрес электронной почты"
+                  placeholder="Адреса електронної пошти"
                   value={state.email}
                   style={styles.inputForm}
                   onFocus={() => setIsShowKeyboard(true)}
@@ -95,18 +117,32 @@ export const LoginScreen = ({ navigation }) => {
                     style={styles.inputFormText}
                     onPress={() => setIsShowPassword((prevState) => !prevState)}
                   >
-                    {isShowPassword ? "Показать" : "Скрыть"}
+                    {isShowPassword ? "Показати" : "Сховати"}
                   </Text>
                 </View>
 
-                <TouchableOpacity style={styles.buttonWrap} activeOpacity={0.8}>
-                  <Text style={styles.buttonText}>Войти</Text>
+                <TouchableOpacity style={{
+                ...styles.buttonWrap,
+                    marginTop: isShowKeyboard ? 0 : 27,
+                  marginBottom: isShowKeyboard ? 10 : 0,
+                ...Platform.select({
+                  ios: {
+                     marginTop: isShowKeyboard ? 0 : 27,
+                  },
+                  android: {
+                    // marginTop: isShowKeyboard ? -50 : 0,
+                    // marginBottom: isShowKeyboard ? -160 : 0,
+                    // paddingTop: isShowKeyboard ? 80 : 92,
+                  },
+                }),
+              }} activeOpacity={0.8} onPress={handleSubmit}>
+                  <Text style={styles.buttonText}>Увійти</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => navigation.navigate("Register")}
                 >
                   <Text style={styles.underFormText}>
-                    Нет аккаунта? Зарегистрироваться
+                    Немає акаунту? Зареєструватися
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -140,8 +176,7 @@ const styles = StyleSheet.create({
   textLogin: {
     // position: "absolute",
     fontSize: 30,
-    fontWeight: 500,
-    // fontFamily: "RobotoRegular",
+    // fontWeight: 500,
     lineHeight: 35,
     textAlign: "center",
     letterSpacing: 0.02,
@@ -192,7 +227,7 @@ const styles = StyleSheet.create({
   buttonText: {
     // fontFamily: 'Roboto',
     fontStyle: "normal",
-    fontWeight: 400,
+    // fontWeight: 400,
     fontSize: 16,
     lineHeight: 19,
     textAlign: "center",
