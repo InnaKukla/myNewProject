@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { storage } from "../../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   StyleSheet,
   Text,
@@ -14,20 +16,31 @@ import {
   Keyboard,
   Button,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+
+import { useDispatch } from "react-redux";
+import { authSingUpUser } from "../../redux/auth/authOperation";
+import { authSlice } from "../../redux/auth/authReducer";
+
+const { updateUserProfile } = authSlice.actions;
 
 const initialState = {
   login: "",
   email: "",
   password: "",
+  image: null,
 };
 
 export const RegistrationScreen = ({ navigation }) => {
-  console.log(navigation);
+  // console.log(navigation);
 
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [dimensions, setDimensions] = useState(Dimensions.get("window").width);
   const [isShowPassword, setIsShowPassword] = useState(false);
+  //  const [image, setImage] = useState(null);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const onChange = () => {
@@ -40,15 +53,66 @@ export const RegistrationScreen = ({ navigation }) => {
     // };
   }, []);
 
-  const keyboardHide = () => {
+  const handleSubmit = () => {
+    uploadAvatarToServer();
     setIsShowKeyboard(false);
+    console.log(state);
     Keyboard.dismiss();
+    dispatch(authSingUpUser(state));
+    dispatch(updateUserProfile(state));
     console.log(state);
     setState(initialState);
   };
+  // const uploadPostToServer = async () => {
+  //     const avatar = await uploadAvatarToServer();
+  //     console.log("avatar", avatar);
+  //     await addDoc(collection(db, "posts"), {
+  //       userPhoto: avatar,
+
+  //     });
+  //   };
+
+  const uploadAvatarToServer = async () => {
+    const response = await fetch(state.image);
+    const file = await response.blob();
+    const uniquePostId = Date.now().toString();
+
+    const storageRef = await ref(storage, `avatarImg/${uniquePostId}`);
+    console.log(storageRef);
+
+    await uploadBytes(storageRef, file);
+    // await getStorage().ref(`postImg/${uniquePostId}`.put(file));
+
+    const storageDownloadRef = await getDownloadURL(storageRef);
+    return storageDownloadRef;
+  };
+
+  const pickImage = async () => {
+   
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result.uri);
+
+    // if (!result.canceled) {
+    if (!result.canceled) {
+      // setState((prevState) => ({
+      //   ...prevState,
+      //   image: result.assets[0].uri,
+      // }));
+      setState((prevState) => ({
+        ...prevState,
+        image: result.uri,
+      }));
+    }
+  };
 
   return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
+    <TouchableWithoutFeedback onPress={handleSubmit}>
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
@@ -64,7 +128,7 @@ export const RegistrationScreen = ({ navigation }) => {
                 width: dimensions,
                 ...Platform.select({
                   ios: {
-                    marginBottom: isShowKeyboard ? -190 : 0,
+                    marginBottom: isShowKeyboard ? -110 : 0,
                   },
                   android: {
                     marginTop: isShowKeyboard ? -50 : 0,
@@ -75,27 +139,42 @@ export const RegistrationScreen = ({ navigation }) => {
               }}
             >
               <View style={styles.imgWrap}>
-                <Image
-                  style={styles.buttonAddFoto}
-                  source={require("../../assets/add.png")}
-                />
+                <TouchableOpacity onPress={pickImage}>
+                  <Image
+                    style={styles.buttonAddFoto}
+                    source={require("../../assets/add.png")}
+                  />
+                </TouchableOpacity>
+
+                {state.image && (
+                  <Image source={{ uri: state.image }} style={styles.avatar} />
+                )}
               </View>
+
               <Text
                 style={{
                   ...styles.textRegister,
+                  marginBottom: isShowKeyboard ? 15 : 33,
+                  marginTop: isShowKeyboard ? -25 : 0,
+                  // width: dimensions,
                   ...Platform.select({
+                    ios: {
+                      marginBottom: isShowKeyboard ? 15 : 33,
+                      marginTop: isShowKeyboard ? -25 : 0,
+                    },
                     android: {
-                      marginBottom: isShowKeyboard ? 10 : 33,
+                      marginBottom: isShowKeyboard ? 15 : 33,
+                      marginTop: isShowKeyboard ? -25 : 0,
                     },
                   }),
                 }}
               >
-                Регистрация
+                Реєстрація
               </Text>
 
               <View>
                 <TextInput
-                  placeholder="Логин"
+                  placeholder="Логін"
                   value={state.login}
                   style={styles.inputForm}
                   onFocus={() => setIsShowKeyboard(true)}
@@ -104,7 +183,7 @@ export const RegistrationScreen = ({ navigation }) => {
                   }
                 ></TextInput>
                 <TextInput
-                  placeholder="Адрес электронной почты"
+                  placeholder="Адреса електронної пошти"
                   value={state.email}
                   style={styles.inputForm}
                   onFocus={() => setIsShowKeyboard(true)}
@@ -132,21 +211,33 @@ export const RegistrationScreen = ({ navigation }) => {
                       setIsShowPassword((prevState) => !prevState);
                     }}
                   >
-                    {isShowPassword ? "Показать" : "Скрыть"}
+                    {isShowPassword ? "Показати" : "Сховати"}
                   </Text>
                 </View>
 
                 <TouchableOpacity
-                  style={styles.buttonWrap}
+                  style={{
+                    ...styles.buttonWrap,
+                    marginTop: isShowKeyboard ? 0 : 27,
+                    marginBottom: isShowKeyboard ? 10 : 0,
+                    ...Platform.select({
+                      ios: {
+                        marginTop: isShowKeyboard ? 0 : 27,
+                      },
+                      android: {
+                        // marginTop: isShowKeyboard ? -50 : 0,
+                        // marginBottom: isShowKeyboard ? -160 : 0,
+                        // paddingTop: isShowKeyboard ? 80 : 92,
+                      },
+                    }),
+                  }}
                   activeOpacity={0.8}
-                  onPress={keyboardHide}
+                  onPress={handleSubmit}
                 >
-                  <Text style={styles.buttonText}>Зарегистрироваться</Text>
+                  <Text style={styles.buttonText}>Реєстрація</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                  <Text style={styles.underFormText}>
-                    Уже есть аккаунт? Войти
-                  </Text>
+                  <Text style={styles.underFormText}>Вже є акаунт? Увійти</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -186,15 +277,22 @@ const styles = StyleSheet.create({
   },
   buttonAddFoto: {
     position: "absolute",
-    top: "65%",
+    top: 80,
     left: "90%",
     width: 25,
     height: 25,
   },
+  avatar: {
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    borderRadius: 16,
+    zIndex: -1,
+  },
   textRegister: {
     // position: "absolute",
     fontSize: 30,
-    fontWeight: 500,
+    // fontWeight: 500,
     fontFamily: "RobotoMedium",
     lineHeight: 35,
     textAlign: "center",
