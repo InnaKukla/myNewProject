@@ -1,15 +1,16 @@
 {
   "expo": {
-    "plugins": [
+     "plugins": [
       [
-        "expo-location",
+        "expo-image-picker",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
     ],
     "name": "myNewProject",
     "slug": "myNewProject",
+    "platforms": ["ios", "android", "web"],
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
@@ -23,7 +24,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "y"
     },
     "android": {
       "adaptiveIcon": {
