@@ -1,11 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, Platform } from "react-native";
+import { Provider, useSelector } from 'react-redux'
 
 import React, { useCallback } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { NavigationContainer } from "@react-navigation/native";
-import { useRoute } from "./router";
+import { store } from "./redux/store";
+import { Main } from "./components/Main";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -13,10 +14,11 @@ SplashScreen.preventAutoHideAsync();
 
 
 export default function App() {
-  const routing = useRoute(true);
+
   const [fontsLoaded] = useFonts({
     RobotoRegular: require("./assets/font/Roboto-Regular.ttf"),
     RobotoMedium: require("./assets/font/Roboto-Medium.ttf"),
+    InterVariableFont: require("./assets/font/Inter-VariableFont.ttf")
   });
 
   const onLayoutRootView = useCallback(async () => {
@@ -30,11 +32,13 @@ export default function App() {
   }
 
   return (
-    <View onLayout={onLayoutRootView} style={styles.container}>
-      <NavigationContainer>
-        {routing}
-      </NavigationContainer>
+    <Provider store={store}>
+      <StatusBar/>
+      <View onLayout={onLayoutRootView} style={styles.container}>
+        <Main/>
     </View>
+    </Provider>
+    
   );
 }
 
@@ -42,10 +46,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-  },
-  image: {
-    flex: 1,
-    justifyContent: "flex-end",
-    resizeMode: "cover",
   },
 });
