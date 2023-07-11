@@ -17,7 +17,6 @@ import {
 import { useDispatch } from "react-redux";
 import { authSingInUser } from "../../redux/auth/authOperation";
 
-
 const initialState = { email: "", password: "" };
 
 export const LoginScreen = ({ navigation }) => {
@@ -42,8 +41,7 @@ export const LoginScreen = ({ navigation }) => {
   const handleSubmit = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    console.log(state);
-    dispatch(authSingInUser(state))
+    dispatch(authSingInUser(state));
     setState(initialState);
   };
 
@@ -70,25 +68,24 @@ export const LoginScreen = ({ navigation }) => {
                     marginTop: isShowKeyboard ? -50 : 0,
                   },
                 }),
-                // marginBottom: isShowKeyboard ? -230 : 0,
               }}
             >
-              <Text style={{
+              <Text
+                style={{
                   ...styles.textLogin,
                   marginBottom: isShowKeyboard ? 15 : 33,
-                // // width: dimensions,
                   ...Platform.select({
                     ios: {
-                    marginBottom: isShowKeyboard ? 15 : 33,
-                   
-                  },
+                      marginBottom: isShowKeyboard ? 15 : 33,
+                    },
                     android: {
                       marginBottom: isShowKeyboard ? 15 : 33,
-                 
                     },
                   }),
-                }
-              }>Увійти</Text>
+                }}
+              >
+                Увійти
+              </Text>
               <View>
                 <TextInput
                   placeholder="Адреса електронної пошти"
@@ -121,21 +118,21 @@ export const LoginScreen = ({ navigation }) => {
                   </Text>
                 </View>
 
-                <TouchableOpacity style={{
-                ...styles.buttonWrap,
+                <TouchableOpacity
+                  style={{
+                    ...styles.buttonWrap,
                     marginTop: isShowKeyboard ? 0 : 27,
-                  marginBottom: isShowKeyboard ? 10 : 0,
-                ...Platform.select({
-                  ios: {
-                     marginTop: isShowKeyboard ? 0 : 27,
-                  },
-                  android: {
-                    // marginTop: isShowKeyboard ? -50 : 0,
-                    // marginBottom: isShowKeyboard ? -160 : 0,
-                    // paddingTop: isShowKeyboard ? 80 : 92,
-                  },
-                }),
-              }} activeOpacity={0.8} onPress={handleSubmit}>
+                    marginBottom: isShowKeyboard ? 10 : 0,
+                    ...Platform.select({
+                      ios: {
+                        marginTop: isShowKeyboard ? 0 : 27,
+                      },
+                      android: {},
+                    }),
+                  }}
+                  activeOpacity={0.8}
+                  onPress={handleSubmit}
+                >
                   <Text style={styles.buttonText}>Увійти</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -174,14 +171,11 @@ const styles = StyleSheet.create({
   },
 
   textLogin: {
-    // position: "absolute",
     fontSize: 30,
-    // fontWeight: 500,
     lineHeight: 35,
     textAlign: "center",
     letterSpacing: 0.02,
     color: "#212121",
-    // marginTop: 32,
     marginBottom: 33,
   },
 
@@ -200,8 +194,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     color: "#212121",
-    // textAlign: 'right',
-    // justifyContent: 'space-around',
     alignItems: "flex-end",
   },
   inputFormText: {
@@ -225,9 +217,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   buttonText: {
-    // fontFamily: 'Roboto',
+    fontFamily: "RobotoRegular",
     fontStyle: "normal",
-    // fontWeight: 400,
+    fontWeight: 400,
     fontSize: 16,
     lineHeight: 19,
     textAlign: "center",
@@ -236,7 +228,6 @@ const styles = StyleSheet.create({
 
   underFormText: {
     fontStyle: "normal",
-
     fontSize: 16,
     lineHeight: 19,
     textAlign: "center",
