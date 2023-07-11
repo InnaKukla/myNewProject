@@ -14,7 +14,6 @@ import {
   Dimensions,
   Platform,
   Keyboard,
-  Button,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
@@ -32,13 +31,10 @@ const initialState = {
 };
 
 export const RegistrationScreen = ({ navigation }) => {
-  // console.log(navigation);
-
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [dimensions, setDimensions] = useState(Dimensions.get("window").width);
   const [isShowPassword, setIsShowPassword] = useState(false);
-  //  const [image, setImage] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -56,21 +52,11 @@ export const RegistrationScreen = ({ navigation }) => {
   const handleSubmit = () => {
     uploadAvatarToServer();
     setIsShowKeyboard(false);
-    console.log(state);
     Keyboard.dismiss();
     dispatch(authSingUpUser(state));
     dispatch(updateUserProfile(state));
-    console.log(state);
     setState(initialState);
   };
-  // const uploadPostToServer = async () => {
-  //     const avatar = await uploadAvatarToServer();
-  //     console.log("avatar", avatar);
-  //     await addDoc(collection(db, "posts"), {
-  //       userPhoto: avatar,
-
-  //     });
-  //   };
 
   const uploadAvatarToServer = async () => {
     const response = await fetch(state.image);
@@ -78,17 +64,14 @@ export const RegistrationScreen = ({ navigation }) => {
     const uniquePostId = Date.now().toString();
 
     const storageRef = await ref(storage, `avatarImg/${uniquePostId}`);
-    console.log(storageRef);
 
     await uploadBytes(storageRef, file);
-    // await getStorage().ref(`postImg/${uniquePostId}`.put(file));
 
     const storageDownloadRef = await getDownloadURL(storageRef);
     return storageDownloadRef;
   };
 
   const pickImage = async () => {
-   
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -96,14 +79,7 @@ export const RegistrationScreen = ({ navigation }) => {
       quality: 1,
     });
 
-    console.log(result.uri);
-
-    // if (!result.canceled) {
     if (!result.canceled) {
-      // setState((prevState) => ({
-      //   ...prevState,
-      //   image: result.assets[0].uri,
-      // }));
       setState((prevState) => ({
         ...prevState,
         image: result.uri,
@@ -224,11 +200,7 @@ export const RegistrationScreen = ({ navigation }) => {
                       ios: {
                         marginTop: isShowKeyboard ? 0 : 27,
                       },
-                      android: {
-                        // marginTop: isShowKeyboard ? -50 : 0,
-                        // marginBottom: isShowKeyboard ? -160 : 0,
-                        // paddingTop: isShowKeyboard ? 80 : 92,
-                      },
+                      android: {},
                     }),
                   }}
                   activeOpacity={0.8}
@@ -290,9 +262,8 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   textRegister: {
-    // position: "absolute",
     fontSize: 30,
-    // fontWeight: 500,
+    fontWeight: 500,
     fontFamily: "RobotoMedium",
     lineHeight: 35,
     textAlign: "center",
