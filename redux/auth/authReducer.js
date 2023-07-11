@@ -5,7 +5,7 @@ const state = {
   userName: null,
   userEmail: null,
   stateChange: false,
-  userPhoto: null
+  userPhoto: null,
 };
 export const authSlice = createSlice({
   name: "auth",
@@ -16,7 +16,7 @@ export const authSlice = createSlice({
       userId: payload.userId,
       userName: payload.userName,
       userEmail: payload.userEmail,
-      userPhoto: payload.userPhoto
+      userPhoto: payload.userPhoto,
     }),
     authStateChange: (state, { payload }) => ({
       ...state,
