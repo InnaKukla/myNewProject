@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Text,
   View,
@@ -7,26 +7,20 @@ import {
   Image,
   TouchableOpacity,
   ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
-// import { collection, where, query, onSnapshot, doc } from "firebase/firestore";
 import { authSingOutUser } from "../../redux/auth/authOperation";
-// import { db } from "../../firebase/config";
 import { useDispatch, useSelector } from "react-redux";
 import { Feather } from "@expo/vector-icons";
-import {getUserPosts} from "../../redux/posts/postsOperation"
+import { getUserPosts } from "../../redux/posts/postsOperation";
 
 export const ProfileScreen = ({ route, navigation }) => {
-
- const { userName, userPhoto } = useSelector((state) => state.auth);
+  const { userName, userPhoto } = useSelector((state) => state.auth);
   const { profilePosts } = useSelector((state) => state.posts);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { userId } = useSelector((state) => state.auth);
-//   
+  //
   useEffect(() => {
-   dispatch(getUserPosts(userId))
-   
+    dispatch(getUserPosts(userId));
   }, [dispatch]);
 
   const singOut = () => {
@@ -39,30 +33,24 @@ export const ProfileScreen = ({ route, navigation }) => {
         style={styles.image}
         source={require("../../assets/imageBackground.png")}
       >
-        <View style={styles.registerForm}>
+        <View style={styles.wrapper}>
           <View style={styles.imgWrap}>
-            {userPhoto
-              &&
-              (
-                  <Image
-                    source={{ uri: userPhoto }}
-                    style={styles.avatar}
-                  />
-              )
-            }
-            {userPhoto ? (<Image
-              style={styles.buttonPresentFoto}
-              source={require("../../assets/presentPhoto.png")}
-            />) : (<Image
-              style={styles.buttonAddFoto}
-              source={require("../../assets/add.png")}
-            />)}
-            {/* <Image
-              style={styles.buttonAddFoto}
-              source={require("../../assets/add.png")}
-            /> */}
+            {userPhoto && (
+              <Image source={{ uri: userPhoto }} style={styles.avatar} />
+            )}
+            {userPhoto ? (
+              <Image
+                style={styles.buttonPresentFoto}
+                source={require("../../assets/presentPhoto.png")}
+              />
+            ) : (
+              <Image
+                style={styles.buttonAddFoto}
+                source={require("../../assets/add.png")}
+              />
+            )}
           </View>
-           <View>
+          <View>
             <TouchableOpacity style={styles.iconLogOutWrap} onPress={singOut}>
               <Text style={styles.iconLogOut}>
                 <Feather name="log-out" color={"#BDBDBD"} size={24} />
@@ -123,12 +111,7 @@ export const ProfileScreen = ({ route, navigation }) => {
                       </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                      style={styles.likesContainer}
-                      onPress={() => {
-                        // setCountLikes((prevState) => (prevState += 1));
-                      }}
-                    >
+                    <TouchableOpacity style={styles.likesContainer}>
                       <Feather
                         name="thumbs-up"
                         size={20}
@@ -152,16 +135,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // paddingHorizontal: 16,
-    // justifyContent: "center",
-    // alignItems: "center",
   },
   image: {
     flex: 1,
     justifyContent: "flex-end",
     resizeMode: "cover",
   },
-  registerForm: {
+  wrapper: {
     flex: 1,
     backgroundColor: "#FFFFFF",
     alignItems: "center",
@@ -178,15 +158,15 @@ const styles = StyleSheet.create({
     left: "36%",
     backgroundColor: "#F6F6F6",
     borderRadius: 16,
-    zIndex: 999
+    zIndex: 999,
   },
-   avatar: {
+  avatar: {
     width: "100%",
     height: "100%",
     alignItems: "center",
     borderRadius: 16,
-    zIndex: -1
-  }, 
+    zIndex: -1,
+  },
   buttonAddFoto: {
     position: "absolute",
     top: "65%",
@@ -204,9 +184,7 @@ const styles = StyleSheet.create({
     marginBottom: 90,
   },
   textName: {
-    // position: "absolute",
     fontSize: 30,
-    // fontWeight: 500,
     fontFamily: "RobotoMedium",
     lineHeight: 35,
     textAlign: "center",
@@ -217,10 +195,10 @@ const styles = StyleSheet.create({
 
   postContainer: {
     alignItems: "center",
-    // marginHorizontal: 16,
+    marginHorizontal: 16,
   },
   foto: {
-    width: 380,
+    width: 360,
     marginBottom: 5,
     borderRadius: 8,
     height: 240,
@@ -244,7 +222,7 @@ const styles = StyleSheet.create({
   commentsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 30
+    marginRight: 30,
   },
   numberComments: {
     left: 15,
@@ -255,16 +233,11 @@ const styles = StyleSheet.create({
     color: "#212121",
   },
 
-  iconComments: {
-    // left: 10,
-  },
-
   locationContainer: {
     flexDirection: "row",
     alignItems: "center",
     left: 200,
   },
-
 
   nameLocation: {
     alignSelf: "flex-end",
@@ -273,7 +246,6 @@ const styles = StyleSheet.create({
   },
   likesContainer: {
     flexDirection: "row",
-    // alignItems: "flex-end",
   },
   numberLikes: {
     marginLeft: 10,
@@ -283,13 +255,10 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontSize: 16,
     color: "#212121",
-    // alignSelf: "flex-end",
   },
   iconLogOut: {
-    // marginBottom: 10,
-    // paddingRight: 10,
     marginTop: 150,
-    marginLeft: 360,
-    marginBottom: 0
+    marginLeft: 350,
+    marginBottom: 0,
   },
 });
