@@ -8,21 +8,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import {
-  collection,
-  onSnapshot,
-  doc,
-  query,
-  addDoc,
-  getDocs,
-  getCountFromServer,
-} from "firebase/firestore";
+import { collection, doc, addDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllPosts, getUserPosts } from "../../redux/posts/postsOperation";
 
 export const Home = ({ route, navigation }) => {
-
   const { userName, userEmail, userPhoto, userId } = useSelector(
     (state) => state.auth
   );
@@ -52,7 +43,6 @@ export const Home = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.authWrap}>
-        {/* <View> */}
         <View style={styles.imgAuthWrap}>
           {userPhoto && (
             <Image source={{ uri: userPhoto }} style={styles.avatar} />
@@ -182,16 +172,14 @@ const styles = StyleSheet.create({
     color: "rgba(33, 33, 33, 0.8)",
   },
   postsListWrapper: {
-    // marginTop: 33,
     marginBottom: 100,
   },
   postContainer: {
     alignItems: "center",
-    // marginHorizontal: 16,
   },
   foto: {
     width: "100%",
-    height: 200,
+    height: 240,
     marginBottom: 5,
     borderRadius: 8,
     height: 240,
@@ -215,7 +203,7 @@ const styles = StyleSheet.create({
   commentsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 30
+    marginRight: 30,
   },
   numberComments: {
     left: 15,
@@ -229,7 +217,7 @@ const styles = StyleSheet.create({
   locationContainer: {
     flexDirection: "row",
     alignItems: "center",
-    left: 200
+    left: 200,
   },
 
   nameLocation: {
