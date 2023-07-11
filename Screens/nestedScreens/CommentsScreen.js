@@ -9,25 +9,36 @@ import {
   FlatList,
   Image,
   KeyboardAvoidingView,
+  Dimensions,
   Platform,
-  TouchableWithoutFeedback
+  Keyboard,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { collection, doc, addDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { AntDesign } from "@expo/vector-icons";
 import date from "date-and-time";
-import {getAllPosts, getUserPosts} from "../../redux/posts/postsOperation"
+import { getAllPosts, getUserPosts } from "../../redux/posts/postsOperation";
 
-export const CommentsScreen = ({ route, navigation }) => {
-  const dispatch = useDispatch()
-   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+export const CommentsScreen = ({ route }) => {
+  const dispatch = useDispatch();
+  const [dimensions, setDimensions] = useState(Dimensions.get("window").width);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const { postId, photo } = route.params;
-  console.log(route.params);
   const [comment, setComment] = useState("");
   const { userName, userId, userPhoto } = useSelector((state) => state.auth);
   const [allComments, setAllComments] = useState([]);
-  const [countComments, setCountComments] = useState(0);
+
+  useEffect(() => {
+    const onChange = () => {
+      const width = Dimensions.get("window").width;
+      setDimensions(width);
+    };
+    Dimensions.addEventListener("change", onChange);
+    // return () => {
+    //   Dimensions.removeEventListener("change", onChange);
+    // };
+  }, []);
 
   useEffect(() => {
     getAllComments();
@@ -35,9 +46,9 @@ export const CommentsScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     return () => {
-      dispatch(getAllPosts())
-      dispatch(getUserPosts(userId))
-   }
+      dispatch(getAllPosts());
+      dispatch(getUserPosts(userId));
+    };
   }, [dispatch]);
 
   const formatData = () => {
@@ -54,101 +65,108 @@ export const CommentsScreen = ({ route, navigation }) => {
       userPhoto,
       time: formatData(),
     });
+    keyboardHide()
     setComment("");
   };
 
   const getAllComments = async () => {
     const commentsAll = await doc(db, "posts", postId);
-    console.log(commentsAll);
     await onSnapshot(collection(commentsAll, "comments"), (data) => {
-      console.log("data.docs", data.doc);
-      console.log("data", data);
-      setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-      console.log(allComments);
-    
+      setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     });
   };
-  // console.log("data.docs.countComments", data.docs.countComments);
+
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
 
   return (
     <View style={styles.container}>
-{/* <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      > */}
-        <View 
-          style={styles.postContainer}
-        // style={{
-        //     ...styles.postContainer,
-            // marginBottom: isShowKeyboard ? -190 : 16,
-            // width: dimensions,
-            // ...Platform.select({
-            //   ios: {
-            //     // marginBottom: isShowKeyboard ? 145 : 0,
-            //   },
-            //   android: {
-            //     // marginTop: isShowKeyboard ? -50 : 0,
-            //     // marginBottom: isShowKeyboard ? -160 : 0,
-            //     // paddingTop: isShowKeyboard ? 80 : 92,
-            //   },
-            // }),
-        // }}
-        >
+      <View style={styles.postContainer}>
         <Image source={{ uri: photo }} style={styles.foto} />
       </View>
-      {/* <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      > */} 
       <SafeAreaView style={styles.container}>
         <FlatList
           data={allComments}
           renderItem={({ item }) => {
-            console.log(allComments);
-           const isOwner = item.authorId === userId
+            const isOwner = item.authorId === userId;
             return (
-            <View>
-              <View style={[styles.commentsContainer, {flexDirection: isOwner ? "row-reverse" : "row"}]}>
-                <View style={styles.commentsUserPhotoContainer}>
-                  {userPhoto && (
-                    <Image source={{ uri: userPhoto }} style={styles.avatar} />
-                  )}
+              <View>
+                <View
+                  style={[
+                    styles.commentsContainer,
+                    { flexDirection: isOwner ? "row-reverse" : "row" },
+                  ]}
+                >
+                  <View style={styles.commentsUserPhotoContainer}>
+                    {userPhoto && (
+                      <Image
+                        source={{ uri: userPhoto }}
+                        style={styles.avatar}
+                      />
+                    )}
                   </View>
-                  
-                <View style={styles.commentsTextContainer}>
-                  <Text>{item.comment}</Text>
-                  <Text style={styles.commentsTime}>{item.time}</Text>
+
+                  {isOwner ? (
+                    <View style={styles.ownCommentsTextContainer}>
+                      <Text>{item.comment}</Text>
+                      <Text style={styles.commentsTime}>{item.time}</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.commentsTextContainer}>
+                      <Text>{item.comment}</Text>
+                      <Text style={styles.commentsTime}>{item.time}</Text>
+                    </View>
+                  )}
                 </View>
               </View>
-            </View>
-          )
-          }
-          
-          }
+            );
+          }}
           keyExtractor={(item) => item.id}
         />
       </SafeAreaView>
-      
-        <View style={styles.writeCommentContainer}>
-          <TextInput
-            placeholder="Comment..."
-            value={comment}
-            style={styles.writeCommentInput}
-            onChangeText={(value) => setComment(value)}
-            onFocus={() => setIsShowKeyboard(true)}
-          ></TextInput>
-        </View>
-        <TouchableOpacity
-          style={styles.commentButtonWrap}
-          activeOpacity={0.8}
-          onPress={createComment}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <View
+          style={{
+            width: dimensions,
+            ...Platform.select({
+              ios: {
+                marginBottom: isShowKeyboard ? 125 : 0,
+              },
+              android: {
+                marginTop: isShowKeyboard ? -50 : 0,
+              },
+            }),
+          }}
         >
-          <AntDesign
-            name="arrowup"
-            size={22}
-            color="white"
-            style={styles.commentButton}
-          />
-        </TouchableOpacity>
-      {/* </KeyboardAvoidingView> */}
+          <View style={styles.writeCommentContainer}>
+            <TextInput
+              placeholder="Comment..."
+              value={comment}
+              style={styles.writeCommentInput}
+              onChangeText={(value) => setComment(value)}
+              onFocus={() => setIsShowKeyboard(true)}
+              onBlur={keyboardHide}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={styles.commentButtonWrap}
+            activeOpacity={0.8}
+            onPress={createComment}
+          >
+            <AntDesign
+              name="arrowup"
+              size={22}
+              color="white"
+              style={styles.commentButton}
+            />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </View>
   );
 };
@@ -164,7 +182,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   foto: {
-    width: 350,
+    width: "100%",
     height: 200,
     marginBottom: 5,
     borderRadius: 8,
@@ -172,6 +190,7 @@ const styles = StyleSheet.create({
   },
   commentsContainer: {
     paddingTop: 32,
+    marginHorizontal: 16,
   },
 
   commentsUserPhotoContainer: {
@@ -198,6 +217,19 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 0, 0, 0.03)",
     marginBottom: 24,
     marginLeft: 60,
+    backgroundColor: "rgba(0, 0, 0, 0.03)",
+  },
+  ownCommentsTextContainer: {
+    width: 299,
+    // height: 103,
+    padding: 16,
+    borderWidth: 1,
+    borderBottomRightRadius: 6,
+    borderTopLeftRadius: 6,
+    borderBottomLeftRadius: 6,
+    borderColor: "rgba(0, 0, 0, 0.03)",
+    marginBottom: 24,
+    marginRight: 60,
     backgroundColor: "rgba(0, 0, 0, 0.03)",
   },
   avatar: {
