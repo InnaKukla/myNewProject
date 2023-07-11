@@ -1,4 +1,4 @@
-import {auth} from "../../firebase/config";
+import { auth } from "../../firebase/config";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -8,8 +8,7 @@ import {
 } from "firebase/auth";
 import { authSlice } from "./authReducer";
 
-
-const {updateUserProfile, authStateChange, authSingOut } = authSlice.actions;
+const { updateUserProfile, authStateChange, authSingOut } = authSlice.actions;
 
 export const authSingUpUser =
   ({ email, password, login, image }) =>
@@ -18,22 +17,16 @@ export const authSingUpUser =
       await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(auth.currentUser, {
         displayName: login,
-        photoURL: image
-      //   email: email,
-      //  image
+        photoURL: image,
       });
-
-      // const user = await auth.currentUser;
-      // console.log(user);
-
 
       const { uid, displayName, photoURL } = await auth.currentUser;
       dispatch(
-       updateUserProfile({
+        updateUserProfile({
           userId: uid,
-         userName: displayName,
-         userEmail: email,
-          userPhoto: photoURL
+          userName: displayName,
+          userEmail: email,
+          userPhoto: photoURL,
         })
       );
     } catch (error) {
@@ -47,7 +40,6 @@ export const authSingInUser =
   async (dispatch, getState) => {
     try {
       const user = signInWithEmailAndPassword(auth, email, password);
-      console.log("user", user);
     } catch (error) {
       console.log("error", error.code);
       console.log("error.message", error.message);
@@ -56,20 +48,19 @@ export const authSingInUser =
 
 export const authSingOutUser = () => async (dispatch, setState) => {
   const user = auth.signOut();
-  
-  dispatch(authSingOut())
+
+  dispatch(authSingOut());
 };
 
 export const authStateChangeUser = () => async (dispatch, setState) => {
   await onAuthStateChanged(auth, (user) => {
-    console.log(user);
     if (user) {
       dispatch(
         updateUserProfile({
           userId: user.uid,
           userName: user.displayName,
           userEmail: user.email,
-          userPhoto: user.photoURL
+          userPhoto: user.photoURL,
         })
       );
       dispatch(authStateChange({ stateChange: true }));
