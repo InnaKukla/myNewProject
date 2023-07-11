@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View, StyleSheet } from "react-native";
-import MapView, {Marker} from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 
 export const MapScreen = ({ route }) => {
   console.log("route.params.location", route);
@@ -8,7 +8,7 @@ export const MapScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       <MapView
-      style={{flex: 1}}
+        style={{ flex: 1 }}
         initialRegion={{
           latitude: latitude,
           longitude: longitude,
@@ -16,7 +16,7 @@ export const MapScreen = ({ route }) => {
           longitudeDelta: 0.006,
         }}
       >
-        <Marker coordinate={{latitude, longitude}}/>
+        <Marker coordinate={{ latitude, longitude }} />
       </MapView>
     </View>
   );
