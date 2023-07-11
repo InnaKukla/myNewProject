@@ -23,8 +23,10 @@ import {
 
 import { Fontisto, Feather } from "@expo/vector-icons";
 import { Button, ScrollView } from "react-native-web";
-import { getAllComments, getAllPosts, getUserPosts } from "../../redux/posts/postsOperation"
-
+import {
+  getAllPosts,
+  getUserPosts,
+} from "../../redux/posts/postsOperation";
 
 export const CreatePostsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -89,31 +91,19 @@ export const CreatePostsScreen = ({ navigation }) => {
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
-    console.log(photo);
     setPhoto(photo.uri);
     const location = await Location.getCurrentPositionAsync({});
-    console.log(location.coords);
     setLocation(location.coords);
-
-    // setLocation(location.coords)
   };
-  console.log("photo", photo);
-  console.log("location", location);
-
 
   const sendPhoto = () => {
     if (photo !== "") {
       uploadPostToServer();
-      // navigation.navigate("Home");
-
-      // setDescriptionFoto("");
-      // setDescriptionLocality("");
-      // setPhoto("");
-    }
+      }
     if (image !== "") {
       uploadPostImageToServer();
     }
-    
+
     navigation.navigate("Home");
 
     setDescriptionFoto("");
@@ -128,15 +118,13 @@ export const CreatePostsScreen = ({ navigation }) => {
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    // console.log(descriptionFoto);
-    // console.log(descriptionLocality);
     setDescriptionFoto("");
     setDescriptionLocality("");
   };
 
   const uploadPostToServer = async () => {
     const photo = await uploadPhotoToServer();
-    console.log("photo", photo);
+    
     await addDoc(collection(db, "posts"), {
       photo,
       descriptionFoto,
@@ -148,16 +136,16 @@ export const CreatePostsScreen = ({ navigation }) => {
       userId,
       userName,
       userPhoto,
-      // userEmail
+      
     });
-    
-    dispatch(getUserPosts(userId))
+
+    dispatch(getUserPosts(userId));
     dispatch(getAllPosts());
   };
 
   const uploadPostImageToServer = async () => {
     const photo = await uploadImageToServer();
-    console.log("photo", photo);
+    
     await addDoc(collection(db, "posts"), {
       photo,
       descriptionFoto,
@@ -169,10 +157,9 @@ export const CreatePostsScreen = ({ navigation }) => {
       userId,
       userName,
       userPhoto,
-      // userEmail
     });
 
-    dispatch(getUserPosts(userId))
+    dispatch(getUserPosts(userId));
     dispatch(getAllPosts());
   };
 
@@ -182,10 +169,8 @@ export const CreatePostsScreen = ({ navigation }) => {
     const uniquePostId = Date.now().toString();
 
     const storageRef = await ref(storage, `postImg/${uniquePostId}`);
-    console.log(storageRef);
 
     await uploadBytes(storageRef, file);
-    // await getStorage().ref(`postImg/${uniquePostId}`.put(file));
 
     const storageDownloadRef = await getDownloadURL(storageRef);
     return storageDownloadRef;
@@ -211,10 +196,8 @@ export const CreatePostsScreen = ({ navigation }) => {
     const uniquePostId = Date.now().toString();
 
     const storageRef = await ref(storage, `postImg/${uniquePostId}`);
-    console.log(storageRef);
 
     await uploadBytes(storageRef, file);
-    // await getStorage().ref(`postImg/${uniquePostId}`.put(file));
 
     const storageDownloadRef = await getDownloadURL(storageRef);
     return storageDownloadRef;
@@ -263,7 +246,6 @@ export const CreatePostsScreen = ({ navigation }) => {
             </Camera>
           </TouchableOpacity>
 
-          {/* <TouchableOpacity onPress={pickImage}> */}
           {image || photo ? (
             <View style={styles.cameraButtonsChange}>
               <TouchableOpacity onPress={pickImage}>
@@ -283,11 +265,7 @@ export const CreatePostsScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           )}
-          {/* <Text style={styles.cameraButtonLoad}>Load foto</Text> */}
-          {/* {image && (
-                <Image source={{ uri: image }} style={styles.loadPhoto} />
-              )}
-            </TouchableOpacity> */}
+         
           <View style={styles.descriptionContainer}>
             <TextInput
               placeholder="Description"
@@ -298,9 +276,9 @@ export const CreatePostsScreen = ({ navigation }) => {
           </View>
           <View style={styles.descriptionContainer}>
             <TouchableOpacity
-              // onPress={navigation.navigate("Карта",
-              //   { location: location }
-              // )}
+            // onPress={navigation.navigate("Карта",
+            //   { location: location }
+            // )}
             >
               <Feather
                 name="map-pin"
@@ -317,14 +295,6 @@ export const CreatePostsScreen = ({ navigation }) => {
               onChangeText={(value) => setDescriptionLocality(value)}
             ></TextInput>
           </View>
-          {/* <TouchableOpacity
-              style={styles.publishButtonWrap}
-              activeOpacity={0.8}
-            >
-              <Text onPress={sendPhoto} style={styles.publishActiveButtonText}>
-                Опубліковати
-              </Text>
-            </TouchableOpacity> */}
           {photo || image ? (
             <TouchableOpacity
               style={styles.publishActiveButtonWrap}
@@ -385,7 +355,6 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: "center",
     alignItems: "center",
-    // top: 50,
   },
   cameraButtonsChange: {
     flexDirection: "row",
@@ -398,7 +367,6 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontSize: 16,
     color: "#BDBDBD",
-    // marginLeft: 16,
     marginTop: 8,
     marginBottom: 48,
   },
@@ -423,7 +391,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     top: -240,
   },
-  deletePhotoButtonWrap: {},
 
   descriptionContainer: {
     borderBottomWidth: 1,
@@ -450,7 +417,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     justifyContent: "center",
-    // bottom: 15,
   },
   publishButtonWrap: {
     width: "100%",
@@ -492,5 +458,5 @@ const styles = StyleSheet.create({
   deletePhotoButtonWrap: {
     alignItems: "center",
     marginTop: "20%",
-  }
+  },
 });
