@@ -1,28 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const state = {
-    posts: [],
-    profilePosts: [],
-    // comments: []
+  posts: [],
+  profilePosts: [],
+  // comments: []
 };
 
 export const postsSlice = createSlice({
-    name: "posts",
-    initialState: state,
-    reducers: {
-updatePosts: (state, { payload }) => ({
+  name: "posts",
+  initialState: state,
+  reducers: {
+    updatePosts: (state, { payload }) => ({
       ...state,
-        posts: payload
-    
+      posts: payload,
     }),
-updateProfilePosts: (state, { payload }) => ({
+    updateProfilePosts: (state, { payload }) => ({
       ...state,
-      profilePosts: payload
+      profilePosts: payload,
     }),
-// updateComments: (state, { payload }) => ({
-//       ...state,
-//       comments: payload
-//     }),
-reset: () => ({...initialState}),
-    }
-})
+    // updateComments: (state, { payload }) => ({
+    //       ...state,
+    //       comments: payload
+    //     }),
+    reset: () => ({ ...initialState }),
+  },
+});
