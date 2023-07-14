@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { getUserPosts } from "../../redux/posts/postsOperation";
 
-export const ProfileScreen = ({ route, navigation }) => {
+export const ProfileScreen = ({ navigation }) => {
   const { userName, userPhoto } = useSelector((state) => state.auth);
   const { profilePosts } = useSelector((state) => state.posts);
   const dispatch = useDispatch();
