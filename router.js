@@ -15,26 +15,25 @@ import { MaterialCommunityIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { authSingOutUser } from "./redux/auth/authOperation";
 import { useDispatch } from "react-redux";
 
-
 const AuthStack = createNativeStackNavigator();
 const MainTab = createBottomTabNavigator();
 
 const goBack = () => {
-  const navigation= useNavigation()
+  const navigation = useNavigation();
   return (
-  <TouchableOpacity onPress={()=> navigation.navigate("Home")}>
-       <Text style={styles.iconBack}>
-           <Feather name="arrow-left" color={"rgba(33, 33, 33, 0.8)"} size={24} />
-         </Text>
-         </TouchableOpacity>
-  )
-}
+    <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+      <Text style={styles.iconBack}>
+        <Feather name="arrow-left" color={"rgba(33, 33, 33, 0.8)"} size={24} />
+      </Text>
+    </TouchableOpacity>
+  );
+};
 
 export const useRoute = (isAuth) => {
   const dispatch = useDispatch();
-    const singOut = () => {
-    dispatch(authSingOutUser())
-  }
+  const singOut = () => {
+    dispatch(authSingOutUser());
+  };
 
   if (!isAuth) {
     return (
@@ -62,36 +61,38 @@ export const useRoute = (isAuth) => {
           height: 40,
           marginTop: 9,
           marginRight: 15,
-          marginLeft: 15
+          marginLeft: 15,
         },
-        tabBarShowLabel: false,    //  new
-     tabBarShowIcon: true,
+        tabBarShowLabel: false, //  new
+        tabBarShowIcon: true,
         tabBarActiveBackgroundColor: "#FF6C00",
-        
+
         tabBarStyle: {
           justifyContent: "center",
           alignItems: "center",
-          paddingHorizontal: 16
-        }
+          paddingHorizontal: 16,
+        },
       }}
     >
       <MainTab.Screen
         options={{
           tabBarShowLabel: false,
-          // tabBarLabel: false,
-          // headerShown: false,
           headerRight: () => (
             <TouchableOpacity onPress={singOut}>
               <Text style={styles.iconLogOut}>
-                <Feather name="log-out" color={'gray'} size={24} />
+                <Feather name="log-out" color={"gray"} size={24} />
               </Text>
             </TouchableOpacity>
           ),
           headerStyle: {
-borderBottomWidth: 1
+            borderBottomWidth: 1,
           },
           tabBarIcon: ({ focused, color, size }) => (
-            <Feather name="grid" size={24} color={focused ? "#fff" : "rgba(33, 33, 33, 0.8)"} />
+            <Feather
+              name="grid"
+              size={24}
+              color={focused ? "#fff" : "rgba(33, 33, 33, 0.8)"}
+            />
           ),
         }}
         name="Публікації"
@@ -100,14 +101,15 @@ borderBottomWidth: 1
       <MainTab.Screen
         backBehavior
         options={{
-          
-          // headerShown: false,
           tabBarShowLabel: false,
           tabBarIcon: ({ focused, color, size }) => (
-            <Feather name="plus" color={focused ? "#fff" : "rgba(33, 33, 33, 0.8)"} size={24} />
+            <Feather
+              name="plus"
+              color={focused ? "#fff" : "rgba(33, 33, 33, 0.8)"}
+              size={24}
+            />
           ),
           headerLeft: () => goBack(),
-          
         }}
         name="Створити публікацію"
         component={CreatePostsScreen}
@@ -116,14 +118,6 @@ borderBottomWidth: 1
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          // headerRight: () => (
-          //   <TouchableOpacity onPress={singOut}>
-          //     <Text style={styles.iconLogOut}>
-          //       <Feather name="log-out" color={"gray"} size={24} />
-          //     </Text>
-          //   </TouchableOpacity>
-          // ),
-          
           tabBarIcon: ({ focused, color, size }) => (
             <Feather
               name="user"
@@ -142,14 +136,11 @@ borderBottomWidth: 1
 const styles = StyleSheet.create({
   mainScreen: {
     paddingTop: 27,
-    // paddingRight: 10,
-    // marginTop: 27,
   },
 
   iconLogOut: {
     marginBottom: 10,
     paddingRight: 10,
-    // marginTop: 27,
   },
   iconBack: {
     paddingLeft: 16,
