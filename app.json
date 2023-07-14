@@ -1,13 +1,5 @@
 {
   "expo": {
-     "plugins": [
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
-        }
-      ]
-    ],
     "name": "myNewProject",
     "slug": "myNewProject",
     "platforms": ["ios", "android", "web"],
