@@ -31,7 +31,6 @@ export const Home = ({ route, navigation }) => {
     posts.map(async (post) => {
       const postId = post.id;
       const postOne = await doc(db, "posts", postId);
-      console.log("postOne", postOne);
       await addDoc(collection(postOne, "likes"), {
         countLikes,
       });
@@ -176,6 +175,7 @@ const styles = StyleSheet.create({
   },
   postContainer: {
     alignItems: "center",
+    marginHorizontal: 16,
   },
   foto: {
     width: "100%",
@@ -222,12 +222,11 @@ const styles = StyleSheet.create({
 
   nameLocation: {
     alignSelf: "flex-end",
-    left: 5,
+    left: 205,
     textDecorationLine: "underline",
   },
   likesContainer: {
     flexDirection: "row",
-    // alignItems: "flex-end",
   },
   numberLikes: {
     marginLeft: 10,
@@ -237,6 +236,5 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontSize: 16,
     color: "#BDBDBD",
-    // alignSelf: "flex-end",
   },
 });
