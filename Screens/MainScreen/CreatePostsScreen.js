@@ -10,11 +10,9 @@ import { storage, db } from "../../firebase/config";
 import {
   Text,
   Dimensions,
-  KeyboardAvoidingView,
   Keyboard,
   View,
   Image,
-  Platform,
   StyleSheet,
   TouchableOpacity,
   TextInput,
@@ -22,11 +20,7 @@ import {
 } from "react-native";
 
 import { Fontisto, Feather } from "@expo/vector-icons";
-import { Button, ScrollView } from "react-native-web";
-import {
-  getAllPosts,
-  getUserPosts,
-} from "../../redux/posts/postsOperation";
+import { getAllPosts, getUserPosts } from "../../redux/posts/postsOperation";
 
 export const CreatePostsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -46,42 +40,26 @@ export const CreatePostsScreen = ({ navigation }) => {
   const { userId, userName, userPhoto } = useSelector((state) => state.auth);
 
   useEffect(() => {
+    const requestCameraPermission = async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Camera permission denied");
+      } else {
+        console.log("Camera permission granted");
+      }
+    };
+
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
-        return;
       }
-
       const location = await Location.getCurrentPositionAsync({});
       setLocation(location.coords);
     })();
-    const onChange = () => {
-      const width = Dimensions.get("window").width;
-      setDimensions(width);
-    };
-    Dimensions.addEventListener("change", onChange);
-    // return () => {
-    //   Dimensions.removeEventListener("change", onChange);
-    // };
 
-    // requestCameraPermission();
-    // navigation.setOptions({tabBarStyle: {display: none}})
+    requestCameraPermission();
   }, []);
-
-  if (!permission) {
-    return null;
-  }
-  if (!permission.granted) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ textAlign: "center" }}>
-          We need your permission to show the camera
-        </Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
-  }
 
   function toggleCameraType() {
     setType((current) =>
@@ -99,7 +77,7 @@ export const CreatePostsScreen = ({ navigation }) => {
   const sendPhoto = () => {
     if (photo !== "") {
       uploadPostToServer();
-      }
+    }
     if (image !== "") {
       uploadPostImageToServer();
     }
@@ -124,7 +102,7 @@ export const CreatePostsScreen = ({ navigation }) => {
 
   const uploadPostToServer = async () => {
     const photo = await uploadPhotoToServer();
-    
+
     await addDoc(collection(db, "posts"), {
       photo,
       descriptionFoto,
@@ -136,7 +114,6 @@ export const CreatePostsScreen = ({ navigation }) => {
       userId,
       userName,
       userPhoto,
-      
     });
 
     dispatch(getUserPosts(userId));
@@ -145,7 +122,7 @@ export const CreatePostsScreen = ({ navigation }) => {
 
   const uploadPostImageToServer = async () => {
     const photo = await uploadImageToServer();
-    
+
     await addDoc(collection(db, "posts"), {
       photo,
       descriptionFoto,
@@ -177,16 +154,14 @@ export const CreatePostsScreen = ({ navigation }) => {
   };
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
     if (!result.canceled) {
-      setImage(result.uri);
+      setImage(result.assets[0].uri);
     }
   };
 
@@ -206,28 +181,7 @@ export const CreatePostsScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
-        {/* <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        > */}
-        <View
-
-        // style={{
-        //   ...styles.createPostContainer,
-        //   // marginBottom: isShowKeyboard ? -190 : 0,
-        //   width: dimensions,
-        //   ...Platform.select({
-        //     ios: {
-        //       // marginBottom: isShowKeyboard ? -110 : 0,
-        //     },
-        //     android: {
-        //       // marginTop: isShowKeyboard ? -50 : 0,
-        //       // marginBottom: isShowKeyboard ? -160 : 0,
-        //       // paddingTop: isShowKeyboard ? 80 : 92,
-        //     },
-        //   }),
-        // }}
-        >
-          {/* <ScrollView> */}
+        <View>
           <TouchableOpacity onPress={toggleCameraType}>
             <Camera style={styles.camera} ref={setCamera} type={type}>
               {photo && (
@@ -245,7 +199,6 @@ export const CreatePostsScreen = ({ navigation }) => {
               </TouchableOpacity>
             </Camera>
           </TouchableOpacity>
-
           {image || photo ? (
             <View style={styles.cameraButtonsChange}>
               <TouchableOpacity onPress={pickImage}>
@@ -265,21 +218,16 @@ export const CreatePostsScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           )}
-         
           <View style={styles.descriptionContainer}>
             <TextInput
               placeholder="Description"
               value={descriptionFoto}
               style={styles.inputDescriptionFoto}
               onChangeText={(value) => setDescriptionFoto(value)}
-            ></TextInput>
+            />
           </View>
           <View style={styles.descriptionContainer}>
-            <TouchableOpacity
-            // onPress={navigation.navigate("Карта",
-            //   { location: location }
-            // )}
-            >
+            <TouchableOpacity>
               <Feather
                 name="map-pin"
                 size={18}
@@ -287,13 +235,12 @@ export const CreatePostsScreen = ({ navigation }) => {
                 style={styles.iconLocality}
               />
             </TouchableOpacity>
-
             <TextInput
               placeholder="Locality"
               value={descriptionLocality}
               style={styles.inputDescriptionLocality}
               onChangeText={(value) => setDescriptionLocality(value)}
-            ></TextInput>
+            />
           </View>
           {photo || image ? (
             <TouchableOpacity
@@ -320,9 +267,7 @@ export const CreatePostsScreen = ({ navigation }) => {
           >
             <Feather name="trash-2" size={24} color="#BDBDBD" />
           </TouchableOpacity>
-          {/* </ScrollView> */}
         </View>
-        {/* </KeyboardAvoidingView> */}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -334,7 +279,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingHorizontal: 16,
   },
-  createPostContainer: {},
   camera: {
     marginTop: 32,
     height: 240,
@@ -379,14 +323,14 @@ const styles = StyleSheet.create({
   },
   takePhoto: {
     height: 240,
-    width: 380,
+    width: 355,
     borderWidth: 1,
     borderRadius: 8,
   },
   loadPhoto: {
     position: "absolute",
     height: 240,
-    width: 380,
+    width: 355,
     borderWidth: 1,
     borderRadius: 8,
     top: -240,
